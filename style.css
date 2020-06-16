@@ -15,6 +15,10 @@ body {
   background-color: black;
 }
 
+#image {
+  max-width: 80vw;
+}
+
 canvas {
   position: absolute;
 }
