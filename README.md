@@ -6,9 +6,10 @@ An repository to try out facial recognition aspects of [faceapi](https://github.
 
 - faceapi
 - Tiny face detector
+- Facial recognition
 - Canvas clearing and drawing
 - async functions
 
 # Demo
 
-Check out the [Netlify demo](https://faceapi-test.netlify.app/)
+Check out the [Netlify demo](https://faceapi-recognition-web.netlify.app/)
