@@ -19,6 +19,21 @@ body {
   max-width: 80vw;
 }
 
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  width: 20vw;
+  height: 20vh;
+  color: black;
+  font-size: 2rem;
+}
+
 canvas {
   position: absolute;
   top: 0;
