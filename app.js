@@ -3,6 +3,9 @@ const imageWrapper = document.getElementById("image");
 const loader = document.getElementById("loading");
 imageWrapper.style.position = "relative";
 
+const labeledImagesLocation =
+  "https://raw.githubusercontent.com/orangegrove1955/faceapi-facial-recognition/master/labeled_images/";
+
 /** When files are uploaded, display image and perform detections */
 const onFileUpload = async () => {
   loader.style.display = "flex";
@@ -16,6 +19,10 @@ const onFileUpload = async () => {
   const canvas = faceapi.createCanvasFromMedia(image);
   imageWrapper.append(canvas);
 
+  // Load Face Descriptions for recognition
+  const labeledFaceDescriptors = await loadLabeledImages();
+  const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
+
   // Change dimensions to overlay correctly
   const displaySize = { width: image.width, height: image.height };
   faceapi.matchDimensions(canvas, displaySize);
@@ -26,11 +33,16 @@ const onFileUpload = async () => {
     .withFaceLandmarks()
     .withFaceDescriptors();
 
-  // Resize detections to fit onto canvas, then create box for each
+  // Resize detections to fit onto canvas, then find any matching results and create box for each
   const resizedDetections = faceapi.resizeResults(detections, displaySize);
-  resizedDetections.forEach((detection) => {
-    const box = detection.detection.box;
-    const drawBox = new faceapi.draw.DrawBox(box, { label: "Face" });
+  const results = resizedDetections.map((resizedDetection) =>
+    faceMatcher.findBestMatch(resizedDetection.descriptor)
+  );
+  console.log("results", results);
+  results.forEach((result, i) => {
+    console.log("result", result);
+    const box = resizedDetections[i].detection.box;
+    const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() });
     drawBox.draw(canvas);
   });
 
@@ -44,6 +56,39 @@ const startRecognition = () => {
 
   // Add event listener to determine when file is uploaded
   imageUpload.addEventListener("change", onFileUpload);
+};
+
+/** Load images from labeled folder for facial recognition training */
+const loadLabeledImages = () => {
+  const labels = [
+    "Black Widow",
+    "Captain America",
+    "Captain Marvel",
+    "Hawkeye",
+    "Jim Rhodes",
+    "Thor",
+    "Tony Stark",
+  ];
+  return Promise.all(
+    // Load images for all labels
+    labels.map(async (label) => {
+      const descriptionOfFace = [];
+      // There are two images for each face, so loop through both, getting image from internet
+      // and using to get facial detections
+      for (let i = 1; i <= 2; i++) {
+        const img = await faceapi.fetchImage(
+          `${labeledImagesLocation}/${label}/${i}.jpg`
+        );
+        const detections = await faceapi
+          .detectSingleFace(img)
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+        descriptionOfFace.push(detections.descriptor);
+      }
+
+      return new faceapi.LabeledFaceDescriptors(label, descriptionOfFace);
+    })
+  );
 };
 
 Promise.all([
