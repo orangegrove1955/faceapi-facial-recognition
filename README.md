@@ -12,4 +12,6 @@ An repository to try out facial recognition aspects of [faceapi](https://github.
 
 # Demo
 
-Check out the [Netlify demo](https://faceapi-recognition-web.netlify.app/)
+First, download the [test files](https://github.com/orangegrove1955/faceapi-facial-recognition/raw/master/test_images.zip)
+
+Then, check out the [Netlify demo](https://faceapi-recognition-web.netlify.app/)
