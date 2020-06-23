@@ -3,20 +3,28 @@ const imageWrapper = document.getElementById("image");
 const loader = document.getElementById("loading");
 imageWrapper.style.position = "relative";
 
+// Global declaration to be able to delete items if user changes image
+let image;
+let canvas;
+
 const labeledImagesLocation =
   "https://raw.githubusercontent.com/orangegrove1955/faceapi-facial-recognition/master/labeled_images/";
 
 /** When files are uploaded, display image and perform detections */
 const onFileUpload = async () => {
+  // If an image already exists from user uploading an item, remove it
+  if (image) image.remove();
+  if (canvas) canvas.remove();
+
   loader.style.display = "flex";
-  const image = await faceapi.bufferToImage(imageUpload.files[0]);
+  image = await faceapi.bufferToImage(imageUpload.files[0]);
 
   image.style.width = "100%";
   image.style.height = "auto";
   imageWrapper.append(image);
 
   // Create canvas to overlay image
-  const canvas = faceapi.createCanvasFromMedia(image);
+  canvas = faceapi.createCanvasFromMedia(image);
   imageWrapper.append(canvas);
 
   // Load Face Descriptions for recognition
